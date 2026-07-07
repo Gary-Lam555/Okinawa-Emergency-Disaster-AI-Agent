@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Okinawa Emergency Disaster AI Agent Portal</title>
+  <meta name="description" content="AI-powered emergency response and evacuation assistant for Okinawa prefecture. Live reporting, shelter locator, and local threat assessment.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Mobile Header -->
+  <header class="mobile-nav-header" id="mobile-header">
+    <div class="brand">
+      <div class="brand-icon-wrapper">
+        <i data-lucide="shield-alert" class="brand-icon"></i>
+      </div>
+      <div>
+        <div class="brand-text">OkiSafe AI</div>
+        <span class="brand-subtitle">Emergency Portal</span>
+      </div>
+    </div>
+    <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Menu">
+      <i data-lucide="menu"></i>
+    </button>
+  </header>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-icon-wrapper">
+            <i data-lucide="shield-alert" class="brand-icon"></i>
+          </div>
+          <div>
+            <div class="brand-text">OkiSafe AI</div>
+            <span class="brand-subtitle" id="label-emergency-portal">Emergency Portal</span>
+          </div>
+        </div>
+
+        <nav aria-label="Main Navigation">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <button class="nav-btn active" id="nav-dashboard" data-tab="dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span class="nav-label" data-en="Dashboard" data-ja="ダッシュボード">Dashboard</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-btn" id="nav-agent" data-tab="agent">
+                <i data-lucide="bot"></i>
+                <span class="nav-label" data-en="AI Emergency Agent" data-ja="AI防災エージェント">AI Emergency Agent</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-btn" id="nav-shelter" data-tab="shelter">
+                <i data-lucide="map-pin"></i>
+                <span class="nav-label" data-en="Shelter Locator" data-ja="避難所マップ">Shelter Locator</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-btn" id="nav-report" data-tab="report">
+                <i data-lucide="megaphone"></i>
+                <span class="nav-label" data-en="Report Disaster" data-ja="被災状況報告">Report Disaster</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <!-- Language Switcher -->
+        <div class="lang-switch" role="group" aria-label="Language Selector">
+          <button class="lang-btn active" id="lang-en" data-lang="en">EN</button>
+          <button class="lang-btn" id="lang-ja" data-lang="ja">JA</button>
+        </div>
+
+        <!-- Live Emergency Broadcast -->
+        <div class="emergency-broadcast">
+          <div class="broadcast-title">
+            <div class="broadcast-pulse"></div>
+            <span id="broadcast-header-text" data-en="Live Advisory" data-ja="緊急警戒情報">Live Advisory</span>
+          </div>
+          <p class="broadcast-text" id="broadcast-msg" data-en="Category 3 Typhoon approaching Okinawa main island. Prepare evacuation gear." data-ja="大型の台風が沖縄本島に接近中。避難準備を行ってください。"></p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Status Bar -->
+      <section class="top-bar" aria-label="System status bar">
+        <div class="page-title-section">
+          <h1 class="page-title" id="main-heading">Okinawa Disaster Command Center</h1>
+          <p class="page-subtitle" id="main-subheading">Real-time AI emergency support and localized advisory feed.</p>
+        </div>
+        <div class="system-status-badge">
+          <div class="status-dot"></div>
+          <span id="status-text" data-en="AI Agent: Operational" data-ja="エージェント：稼働中">AI Agent: Operational</span>
+        </div>
+      </section>
+
+      <!-- TAB 1: DASHBOARD -->
+      <div class="tab-pane active" id="tab-dashboard-content">
+        <div class="dashboard-grid">
+          
+          <!-- Main Panel -->
+          <div class="dashboard-main">
+            <!-- Warning Banner -->
+            <article class="glass-card alerts-banner" aria-labelledby="banner-title">
+              <div class="alerts-header">
+                <h3 class="card-title" id="banner-title">
+                  <i data-lucide="alert-triangle"></i>
+                  <span data-en="Active Advisories & Warnings" data-ja="発表中の気象警報・注意報">Active Advisories & Warnings</span>
+                </h3>
+                <span class="alerts-count" id="active-alert-count">2 Active</span>
+              </div>
+              <div class="alerts-list" id="dashboard-alerts-feed">
+                <!-- Dynamically loaded -->
+              </div>
+            </article>
+
+            <!-- Okinawa Map Overview -->
+            <article class="glass-card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i data-lucide="map"></i>
+                  <span data-en="Okinawa Region Status Map" data-ja="沖縄地域状況マップ">Okinawa Region Status Map</span>
+                </h3>
+                <div class="map-legend">
+                  <div class="legend-item"><span class="legend-dot" style="background: var(--accent-green);"></span><span data-en="Safe" data-ja="安全">Safe</span></div>
+                  <div class="legend-item"><span class="legend-dot" style="background: var(--accent-amber);"></span><span data-en="Warning" data-ja="注意警報">Warning</span></div>
+                  <div class="legend-item"><span class="legend-dot" style="background: var(--accent-red);"></span><span data-en="Danger" data-ja="避難指示">Danger</span></div>
+                </div>
+              </div>
+              <div class="visual-map-container">
+                <!-- Styled Interactive SVG Map of Okinawa -->
+                <svg class="svg-okinawa-map" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Okinawa Main Island -->
+                  <path class="map-node" d="M100 130 Q120 100 150 110 T200 90 T250 80 T300 70 T350 50 T390 60 T420 50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8" stroke-linecap="round"/>
+                  <path class="map-node" d="M100 130 Q120 100 150 110 T200 90 T250 80 T300 70 T350 50 T390 60 T420 50" fill="none" stroke="var(--bg-tertiary)" stroke-width="4" stroke-linecap="round" id="map-island-base"/>
+                  
+                  <!-- Region Dots with Status colors -->
+                  <!-- Naha (South-West) -->
+                  <circle class="map-node" cx="120" cy="125" r="10" fill="var(--accent-amber)" id="node-naha" data-muni="Naha" />
+                  <text class="map-label" x="120" y="145" text-anchor="middle">Naha (那覇)</text>
+
+                  <!-- Okinawa City (Central) -->
+                  <circle class="map-node" cx="210" cy="95" r="8" fill="var(--accent-red)" id="node-okinawacity" data-muni="Okinawa City" />
+                  <text class="map-label" x="210" y="83" text-anchor="middle">Okinawa (沖縄)</text>
+
+                  <!-- Uruma (Central-East) -->
+                  <circle class="map-node" cx="250" cy="85" r="8" fill="var(--accent-amber)" id="node-uruma" data-muni="Uruma" />
+                  <text class="map-label" x="270" y="100" text-anchor="middle">Uruma (うるま)</text>
+
+                  <!-- Nago (North) -->
+                  <circle class="map-node" cx="320" cy="65" r="10" fill="var(--accent-green)" id="node-nago" data-muni="Nago" />
+                  <text class="map-label" x="320" y="50" text-anchor="middle">Nago (名護)</text>
+                  
+                  <!-- Separate Islands (Ishigaki & Miyakojima) representation -->
+                  <rect x="20" y="170" width="100" height="60" fill="rgba(255,255,255,0.02)" stroke="var(--glass-border)" rx="6" />
+                  <text class="map-label" x="70" y="182" text-anchor="middle" font-size="7px">Outer Islands (離島)</text>
+                  
+                  <!-- Miyakojima -->
+                  <circle class="map-node" cx="45" cy="205" r="7" fill="var(--accent-green)" id="node-miyakojima" data-muni="Miyakojima" />
+                  <text class="map-label" x="45" y="222" text-anchor="middle" font-size="7px">Miyako</text>
+
+                  <!-- Ishigaki -->
+                  <circle class="map-node" cx="90" cy="205" r="7" fill="var(--accent-green)" id="node-ishigaki" data-muni="Ishigaki" />
+                  <text class="map-label" x="90" y="222" text-anchor="middle" font-size="7px">Ishigaki</text>
+                </svg>
+
+                <div class="map-overlay" id="map-hover-overlay" style="display: none;">
+                  <div class="map-overlay-title" id="map-overlay-name">Naha City</div>
+                  <div id="map-overlay-status">Status: Normal</div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Status Grid -->
+            <article class="glass-card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i data-lucide="grid"></i>
+                  <span data-en="Municipal Safety Overview" data-ja="各自治体の避難・警報状況">Municipal Safety Overview</span>
+                </h3>
+              </div>
+              <div class="municipal-grid" id="municipal-status-grid">
+                <!-- Populated dynamically -->
+              </div>
+            </article>
+          </div>
+
+          <!-- Sidebar Panels -->
+          <div class="dashboard-sidebar">
+            <!-- Emergency Hotlines -->
+            <article class="glass-card" aria-labelledby="hotline-title">
+              <div class="card-header">
+                <h3 class="card-title" id="hotline-title">
+                  <i data-lucide="phone-call" style="color: var(--accent-red);"></i>
+                  <span data-en="Emergency Hotlines" data-ja="緊急ダイヤル連絡先">Emergency Hotlines</span>
+                </h3>
+              </div>
+              <div class="emergency-contacts">
+                <div class="contact-card">
+                  <div class="contact-info">
+                    <i data-lucide="flame" class="contact-icon"></i>
+                    <div>
+                      <span class="contact-name" data-en="Fire & Ambulance" data-ja="火災・救急・救助">Fire & Ambulance</span>
+                      <span class="contact-desc" data-en="Injury, fire, medical rescue" data-ja="消防署">Injury, fire, medical rescue</span>
+                    </div>
+                  </div>
+                  <a href="tel:119" class="contact-number">119</a>
+                </div>
+                <div class="contact-card">
+                  <div class="contact-info">
+                    <i data-lucide="shield" class="contact-icon" style="color: var(--accent-blue);"></i>
+                    <div>
+                      <span class="contact-name" data-en="Police Department" data-ja="警察署 (事件・事故)">Police Department</span>
+                      <span class="contact-desc" data-en="Accident, crime, immediate hazard" data-ja="警察署">Accident, crime, immediate hazard</span>
+                    </div>
+                  </div>
+                  <a href="tel:110" class="contact-number">110</a>
+                </div>
+                <div class="contact-card">
+                  <div class="contact-info">
+                    <i data-lucide="anchor" class="contact-icon" style="color: var(--accent-blue);"></i>
+                    <div>
+                      <span class="contact-name" data-en="Japan Coast Guard" data-ja="海上保安庁 (海の事故)">Japan Coast Guard</span>
+                      <span class="contact-desc" data-en="Maritime accidents, sea rescue" data-ja="海上保安庁">Maritime accidents, sea rescue</span>
+                    </div>
+                  </div>
+                  <a href="tel:118" class="contact-number">118</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Preparation Checklist -->
+            <article class="glass-card" aria-labelledby="checklist-title">
+              <div class="card-header">
+                <h3 class="card-title" id="checklist-title">
+                  <i data-lucide="check-square" style="color: var(--accent-blue);"></i>
+                  <span data-en="Evacuation Checklist" data-ja="非常時持ち出しチェックリスト">Evacuation Checklist</span>
+                </h3>
+              </div>
+              <div class="checklist-container">
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="3-day supply of drinking water (3L/day)" data-ja="3日分の飲料水（1日3L）">3-day supply of drinking water (3L/day)</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Emergency food supplies (canned, biscuits)" data-ja="非常食（缶詰、乾パン等）">Emergency food supplies (canned, biscuits)</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Mobile charger / Battery banks" data-ja="モバイルバッテリー・充電器">Mobile charger / Battery banks</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="First aid kit & prescription medicine" data-ja="救急箱・常備薬">First aid kit & prescription medicine</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Passport & Residence card / cash" data-ja="パスポート・在留カード・現金">Passport & Residence card / cash</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Flashlight & portable radio" data-ja="懐中電灯・ラジオ">Flashlight & portable radio</span>
+                </label>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: AI AGENT CHAT -->
+      <div class="tab-pane" id="tab-agent-content" style="display: none;">
+        <div class="chat-container">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="agent-profile">
+              <div class="agent-avatar">
+                <i data-lucide="bot"></i>
+              </div>
+              <div class="agent-details">
+                <span class="agent-name" data-en="Okinawa Emergency AI Agent" data-ja="沖縄防災AIエージェント">Okinawa Emergency AI Agent</span>
+                <span class="agent-status" id="agent-status-label" data-en="Bilingual Advisor • Online" data-ja="2カ国語対応アドバイザー • 稼働中">Bilingual Advisor • Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message Area -->
+          <div class="chat-messages" id="chat-box-feed">
+            <!-- Messages inserted here -->
+          </div>
+
+          <!-- Suggested Prompt Pills -->
+          <div class="chat-suggestions" id="suggest-chips">
+            <button class="suggest-btn" data-query="Where is the Naha tsunami shelter?" data-query-ja="那覇の津波避難所はどこ？">Where is the Naha tsunami shelter?</button>
+            <button class="suggest-btn" data-query="Will a typhoon affect my life? What are the dangers?" data-query-ja="台風は命に危険がありますか？どのような危険ですか？">Is a typhoon dangerous?</button>
+            <button class="suggest-btn" data-query="What is the severity of a Shindo 6 earthquake?" data-query-ja="震度6の地震の危険度はどのくらい？">How serious is Shindo 6?</button>
+            <button class="suggest-btn" data-query="What should I prepare for evacuation?" data-query-ja="避難の準備として何を用意すべき？">What should I pack?</button>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="chat-input-bar">
+            <div class="chat-input-wrapper">
+              <input type="text" class="chat-input" id="chat-user-input" placeholder="Ask about evacuation, shelter status, or threat levels...">
+            </div>
+            <button class="send-btn" id="chat-send-btn" aria-label="Send Message">
+              <i data-lucide="send"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: SHELTER LOCATOR -->
+      <div class="tab-pane" id="tab-shelter-content" style="display: none;">
+        <div class="shelter-layout">
+          <!-- Filter Sidebar -->
+          <div class="shelter-sidebar">
+            <div class="search-box">
+              <i data-lucide="search"></i>
+              <input type="text" class="search-input" id="shelter-search" placeholder="Search shelters by name...">
+            </div>
+
+            <!-- Municipality filter -->
+            <div class="filter-group">
+              <label class="filter-label" id="label-filter-muni" data-en="Municipality" data-ja="市町村">Municipality</label>
+              <select class="filter-select" id="shelter-filter-muni">
+                <option value="all" data-en="All Regions" data-ja="すべての地域">All Regions</option>
+                <option value="Naha">Naha (那覇市)</option>
+                <option value="Okinawa City">Okinawa City (沖縄市)</option>
+                <option value="Uruma">Uruma (うるま市)</option>
+                <option value="Nago">Nago (名護市)</option>
+                <option value="Ishigaki">Ishigaki (石垣市)</option>
+                <option value="Miyakojima">Miyakojima (宮古島市)</option>
+              </select>
+            </div>
+
+            <!-- Status filter -->
+            <div class="filter-group">
+              <label class="filter-label" id="label-filter-status" data-en="Shelter Status" data-ja="開設状況">Shelter Status</label>
+              <select class="filter-select" id="shelter-filter-status">
+                <option value="all" data-en="All" data-ja="すべて">All</option>
+                <option value="Open" data-en="Open Only" data-ja="開設中のみ">Open Only</option>
+              </select>
+            </div>
+
+            <!-- Safety checkboxes -->
+            <div class="filter-group">
+              <label class="filter-label" id="label-safety-filters" data-en="Safety Standards" data-ja="安全要件">Safety Standards</label>
+              <div class="checkbox-filter-group">
+                <label class="check-item">
+                  <input type="checkbox" id="filter-tsunami">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Tsunami Safe (High Ground)" data-ja="津波対応 (高台・高層)">Tsunami Safe (High Ground)</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="filter-earthquake">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Earthquake Resistant Structure" data-ja="耐震構造">Earthquake Resistant Structure</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="filter-flood">
+                  <span class="custom-checkbox"></span>
+                  <span data-en="Flood Protected" data-ja="水害対策済">Flood Protected</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Shelter cards listing -->
+            <div class="shelter-list" id="shelter-cards-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Interactive Shelter Map View -->
+          <div class="shelter-map-view">
+            <div class="map-placeholder">
+              <svg class="svg-shelter-map" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" id="shelter-svg-map">
+                <!-- Water BG and Map Island Outline -->
+                <path d="M50 200 Q150 150 250 130 T450 80" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="25" stroke-linecap="round"/>
+                
+                <!-- Pins are rendered in JS dynamically -->
+                <g id="shelter-map-pins">
+                  <!-- Dynamically rendered -->
+                </g>
+              </svg>
+
+              <!-- Shelter Details panel floating at bottom -->
+              <div class="shelter-detail-panel" id="selected-shelter-panel" style="display: none;">
+                <div class="shelter-detail-left">
+                  <h4 class="shelter-detail-title" id="shelter-detail-name">Naha Civic Center</h4>
+                  <p class="shelter-detail-address" id="shelter-detail-addr">2-1-1 Yorimiya, Naha</p>
+                  <div class="shelter-detail-stats">
+                    <div class="stat-item">
+                      <span class="stat-label" data-en="Capacity" data-ja="収容規模">Capacity</span>
+                      <span class="stat-value" id="shelter-detail-cap">1500 people</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label" data-en="Current Occupancy" data-ja="現在の避難者数">Current Occupancy</span>
+                      <span class="stat-value" id="shelter-detail-occ">342 people</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label" data-en="Tsunami Safe" data-ja="津波安全基準">Tsunami Safe</span>
+                      <span class="stat-value" id="shelter-detail-tsu" style="color: var(--accent-green);">YES</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="shelter-detail-right">
+                  <button class="route-btn" id="route-guidance-btn">
+                    <i data-lucide="navigation"></i>
+                    <span data-en="Get Evacuation Route" data-ja="避難経路案内">Get Evacuation Route</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: REPORT DISASTER -->
+      <div class="tab-pane" id="tab-report-content" style="display: none;">
+        <div class="report-container">
+          <div class="glass-card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i data-lucide="megaphone" style="color: var(--accent-red);"></i>
+                <span data-en="Emergency Disaster Reporting" data-ja="被災状況のリアルタイム報告">Emergency Disaster Reporting</span>
+              </h3>
+            </div>
+            
+            <form id="disaster-report-form" onsubmit="return false;">
+              <div class="form-row">
+                <!-- Disaster Type -->
+                <div class="form-group">
+                  <label class="form-label" for="report-type" data-en="Disaster Type" data-ja="災害種別">Disaster Type</label>
+                  <select class="form-select" id="report-type" required>
+                    <option value="" disabled selected data-en="Select Disaster Type" data-ja="災害の種類を選択">Select Disaster Type</option>
+                    <option value="typhoon" data-en="Typhoon" data-ja="台風">Typhoon</option>
+                    <option value="tsunami" data-en="Tsunami" data-ja="津波">Tsunami</option>
+                    <option value="earthquake" data-en="Earthquake" data-ja="地震">Earthquake</option>
+                    <option value="flood" data-en="Flash Flood" data-ja="大雨・道路冠水">Flash Flood / Heavy Rain</option>
+                  </select>
+                </div>
+
+                <!-- Municipality -->
+                <div class="form-group">
+                  <label class="form-label" for="report-municipality" data-en="Municipality" data-ja="発生場所（市町村）">Municipality</label>
+                  <select class="form-select" id="report-municipality" required>
+                    <option value="" disabled selected data-en="Select Location" data-ja="地域を選択">Select Location</option>
+                    <option value="Naha">Naha (那覇市)</option>
+                    <option value="Okinawa City">Okinawa City (沖縄市)</option>
+                    <option value="Uruma">Uruma (うるま市)</option>
+                    <option value="Nago">Nago (名護市)</option>
+                    <option value="Ishigaki">Ishigaki (石垣市)</option>
+                    <option value="Miyakojima">Miyakojima (宮古島市)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Severity Slider -->
+              <div class="form-group">
+                <div class="severity-slider-container">
+                  <label class="form-label" for="report-severity" data-en="Disaster Severity" data-ja="被災規模・深刻度">Disaster Severity</label>
+                  <input type="range" class="form-slider" id="report-severity" min="1" max="4" value="2">
+                  <div class="severity-indicators">
+                    <span class="indicator-low" data-en="Level 1: Low" data-ja="レベル1：軽微">Level 1: Low</span>
+                    <span class="indicator-mod" data-en="Level 2: Moderate" data-ja="レベル2：中規模">Level 2: Moderate</span>
+                    <span class="indicator-high" data-en="Level 3: High" data-ja="レベル3：重大">Level 3: High</span>
+                    <span class="indicator-crit" data-en="Level 4: Critical" data-ja="レベル4：致命的">Level 4: Critical</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="form-group">
+                <label class="form-label" for="report-desc" data-en="Report Details / Description" data-ja="具体的な被災状況の説明">Report Details / Description</label>
+                <textarea class="form-textarea" id="report-desc" placeholder="Describe the scene. (e.g. strong winds broke windows, water flooding streets, landslide on route 58...)" required></textarea>
+              </div>
+
+              <!-- Trapped Checkbox -->
+              <div class="form-group">
+                <label class="check-item">
+                  <input type="checkbox" id="report-trapped">
+                  <span class="custom-checkbox"></span>
+                  <span style="font-weight: 700; color: var(--accent-red);" data-en="WARNING: People trapped or requiring emergency rescue" data-ja="警告：要救助者または逃げ遅れた人がいる">WARNING: People trapped or requiring emergency rescue</span>
+                </label>
+              </div>
+
+              <button class="submit-btn" id="report-submit-btn" type="submit">
+                <i data-lucide="alert-circle" style="vertical-align: middle; margin-right: 0.5rem;"></i>
+                <span data-en="Submit Report to AI Command Center" data-ja="報告内容をAI対策本部へ送信">Submit Report to AI Command Center</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Assessment Result Screen -->
+          <div class="assessment-result" id="assessment-result-box" style="display: none;">
+            <div class="glass-card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i data-lucide="cpu" style="color: var(--accent-amber);"></i>
+                  <span data-en="AI Agent Safety & Life Assessment" data-ja="AIエージェントによる安全・生命リスク診断">AI Agent Safety & Life Assessment</span>
+                </h3>
+              </div>
+
+              <div class="assessment-header-box" id="assess-header-container">
+                <div>
+                  <div class="assessment-title-main" id="assess-level-text">CRITICAL ALERT</div>
+                  <p style="font-size: 0.85rem; opacity: 0.8;" data-en="Immediate action required" data-ja="即時の避難行動が必要です">Immediate action required</p>
+                </div>
+                <div class="assessment-score-badge">
+                  <span data-en="Threat Score" data-ja="危険度スコア">Threat Score</span>: <span id="assess-score-val">90</span>/100
+                </div>
+              </div>
+
+              <div class="assessment-body-card">
+                <!-- Section 1: Life Impact -->
+                <div class="assessment-section">
+                  <h4 class="assessment-section-title">
+                    <i data-lucide="heart-crack" style="width: 16px; height: 16px; margin-right: 0.5rem; vertical-align: middle;"></i>
+                    <span data-en="Life Threat Assessment" data-ja="生命への危険度評価">Life Threat Assessment</span>
+                  </h4>
+                  <p id="assess-life-threat" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-primary);"></p>
+                </div>
+
+                <!-- Section 2: Evacuation Guide -->
+                <div class="assessment-section">
+                  <h4 class="assessment-section-title">
+                    <i data-lucide="footprints" style="width: 16px; height: 16px; margin-right: 0.5rem; vertical-align: middle;"></i>
+                    <span data-en="Evacuation Action Plan" data-ja="推奨される避難行動ステップ">Evacuation Action Plan</span>
+                  </h4>
+                  <ul class="assessment-steps" id="assess-steps-list">
+                    <!-- Loaded dynamically -->
+                  </ul>
+                </div>
+
+                <!-- Section 3: Recommended Shelters -->
+                <div class="assessment-section">
+                  <h4 class="assessment-section-title">
+                    <i data-lucide="shield-check" style="width: 16px; height: 16px; margin-right: 0.5rem; vertical-align: middle;"></i>
+                    <span data-en="Recommended Municipal Shelters" data-ja="推奨される近隣避難所">Recommended Municipal Shelters</span>
+                  </h4>
+                  <div class="shelter-list" id="assess-shelters-list" style="margin-top: 0.75rem;">
+                    <!-- Loaded dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
